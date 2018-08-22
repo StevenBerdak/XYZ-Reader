@@ -5,7 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.database.Cursor;
 
-public interface MainViewModelInterface {
+interface MainViewModelInterface {
 
     void refreshData(Context ctx);
 

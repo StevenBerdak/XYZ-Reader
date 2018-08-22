@@ -10,8 +10,6 @@ import com.sbschoolcode.xyzreader.data.ItemsContract;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private long mItemId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +24,7 @@ public class DetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
-                mItemId = ItemsContract.Items.getItemId(getIntent().getData());
+                long mItemId = ItemsContract.Items.getItemId(getIntent().getData());
                 updateFragmentData(mItemId);
             }
         }

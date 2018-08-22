@@ -11,19 +11,13 @@ import com.sbschoolcode.xyzreader.repository.DataRepository;
 
 public class DetailViewModel extends ViewModel implements DetailViewModelInterface {
 
-    private MutableLiveData<Cursor> mItemLiveData;
-    private DataRepository mDataRepository;
+    private final MutableLiveData<Cursor> mItemLiveData;
+    private final DataRepository mDataRepository;
     private long mCurrentItem;
 
     public DetailViewModel() {
         mItemLiveData = new MutableLiveData<>();
         mDataRepository = DataRepository.getInstance();
-    }
-
-
-    @Override
-    public void clearItem() {
-
     }
 
     @Override

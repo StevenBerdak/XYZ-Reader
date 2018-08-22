@@ -22,6 +22,5 @@
     <dimen name="detail_body_bottom_margin">88dp</dimen>
     <dimen name="detail_body_top_padding">16dp</dimen>
     <dimen name="detail_body_bottom_padding">32dp</dimen>
-    <dimen name="show_all_button_padding">16dp</dimen>
 
 </resources>

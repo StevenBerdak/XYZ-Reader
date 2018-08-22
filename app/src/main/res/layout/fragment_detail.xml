@@ -144,7 +144,7 @@
                     android:layout_gravity="center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:drawableBottom="@drawable/ic_arrow_drop_down_blue_24dp"
+                    android:drawableBottom="@drawable/ic_arrow_drop_down_black_24dp"
                     android:focusable="true"
                     android:paddingBottom="24dp"
                     android:paddingEnd="24dp"

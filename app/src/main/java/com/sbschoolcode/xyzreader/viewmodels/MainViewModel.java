@@ -11,8 +11,8 @@ import com.sbschoolcode.xyzreader.repository.DataRepository;
 
 public class MainViewModel extends ViewModel implements MainViewModelInterface {
 
-    private MutableLiveData<Cursor> mAllArticles;
-    private DataRepository mDataRepository;
+    private final MutableLiveData<Cursor> mAllArticles;
+    private final DataRepository mDataRepository;
 
     public MainViewModel() {
         mAllArticles = new MutableLiveData<>();
@@ -31,6 +31,6 @@ public class MainViewModel extends ViewModel implements MainViewModelInterface {
 
     @Override
     public void removeObserver(Observer<Cursor> observer) {
-
+        mAllArticles.removeObserver(observer);
     }
 }

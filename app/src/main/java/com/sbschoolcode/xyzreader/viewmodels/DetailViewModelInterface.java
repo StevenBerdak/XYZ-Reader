@@ -5,10 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.database.Cursor;
 
-public interface DetailViewModelInterface {
-
-    void clearItem();
-
+interface DetailViewModelInterface {
     void refreshItem(Context ctx, long itemId);
 
     void addObserver(LifecycleOwner lifecycleOwner, Observer<Cursor> observer);

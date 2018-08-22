@@ -3,7 +3,7 @@ package com.sbschoolcode.xyzreader.repository;
 import android.content.Context;
 import android.database.Cursor;
 
-public interface DataRepositoryInterface {
+interface DataRepositoryInterface {
 
     Cursor getAllArticles(Context ctx);
 
