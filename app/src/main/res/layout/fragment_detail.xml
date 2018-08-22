@@ -114,7 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/detail_body_bottom_margin">
+            android:paddingBottom="@dimen/detail_body_bottom_padding">
 
             <TextView
                 android:id="@+id/content_tv"
@@ -133,8 +133,7 @@
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
-                android:layout_marginBottom="@dimen/detail_body_bottom_padding">
+                android:layout_gravity="center">
 
                 <TextView
                     android:id="@+id/detail_content_show_all_tv"
