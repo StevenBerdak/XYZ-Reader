@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="BaseApplication.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- MainActivity Theme / No ActionBar -->
+    <style name="BaseApplication.Theme.MainActivity">
+        <item name="cardViewStyle">@style/CardView</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
+    </style>
+
+    <!-- DetailActivity Theme / No ActionBar -->
+    <style name="BaseApplication.Theme.DetailActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+</resources>

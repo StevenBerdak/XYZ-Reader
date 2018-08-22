@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="image_placeholder_size">32dp</dimen>
+    <dimen name="app_bar_height_not_collapsed_main">120dp</dimen>
+    <dimen name="app_bar_height_not_collapsed_detail">240dp</dimen>
+</resources>
