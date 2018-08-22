@@ -13,6 +13,7 @@ public class DetailViewModel extends ViewModel implements DetailViewModelInterfa
 
     private MutableLiveData<Cursor> mItemLiveData;
     private DataRepository mDataRepository;
+    private long mCurrentItem;
 
     public DetailViewModel() {
         mItemLiveData = new MutableLiveData<>();
@@ -27,6 +28,7 @@ public class DetailViewModel extends ViewModel implements DetailViewModelInterfa
 
     @Override
     public void refreshItem(Context ctx, long itemId) {
+        mCurrentItem = itemId;
         mItemLiveData.postValue(mDataRepository.getSpecificArticleData(ctx, itemId));
     }
 
@@ -38,5 +40,9 @@ public class DetailViewModel extends ViewModel implements DetailViewModelInterfa
     @Override
     public void removeObserver(Observer<Cursor> observer) {
         mItemLiveData.removeObserver(observer);
+    }
+
+    public long getCurrentItem() {
+        return mCurrentItem;
     }
 }

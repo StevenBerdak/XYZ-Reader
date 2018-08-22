@@ -11,4 +11,6 @@
     <string name="ellipses">…</string>
     <string name="fab_action_header">Share</string>
     <string name="fab_action_text">Some sample text</string>
+    <string name="article_detail_content_expand_message">Show All</string>
+    <string name="loading">Loading</string>
 </resources>
