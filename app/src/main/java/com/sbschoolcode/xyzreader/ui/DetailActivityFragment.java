@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -58,6 +60,9 @@ public class DetailActivityFragment extends Fragment {
     @BindView(R.id.detail_fab)
     FloatingActionButton mFab;
 
+    @BindView(R.id.detail_appbar_layout)
+    AppBarLayout mAppBarLayout;
+
     @BindView(R.id.detail_toolbar)
     Toolbar mToolbar;
 
@@ -67,7 +72,7 @@ public class DetailActivityFragment extends Fragment {
     @BindView(R.id.header_bar_subtitle)
     TextView mHeaderBarSubtitle;
 
-    @BindView(R.id.detail_content_read_all_tv)
+    @BindView(R.id.detail_content_show_all_tv)
     TextView mReadAll;
 
     @BindView(R.id.app_bar_title_tv)
@@ -86,6 +91,17 @@ public class DetailActivityFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        //App bar setup
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+                if (verticalOffset != 0) {
+                    if (mAppBarLayout.getElevation() != 4) mAppBarLayout.setElevation(4);
+                } else {
+                    if (mAppBarLayout.getElevation() != 0) mAppBarLayout.setElevation(0);
+                }
+            });
+        }
 
         //Setup FloatingActionButton
         if (getActivity() != null)
@@ -117,9 +133,9 @@ public class DetailActivityFragment extends Fragment {
 
         //Check if cursor is null, if it is clean up and return early
         if (cursor == null || cursor.getCount() == 0) {
-            mHeaderBarTitle.setText("N/A");
-            mHeaderBarSubtitle.setText("N/A");
-            mContentText.setText("N/A");
+            mHeaderBarTitle.setText(R.string.error_title_text);
+            mHeaderBarSubtitle.setText(R.string.error_title_text);
+            mContentText.setText(R.string.error_content_text);
             return;
         }
 

@@ -40,6 +40,7 @@ public class UpdaterService extends IntentService {
         }
         if (ni == null || !ni.isConnected()) {
             Log.w(TAG, "Not online, not refreshing.");
+            sendBroadcast(new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, false));
             return;
         }
 

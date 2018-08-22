@@ -2,6 +2,7 @@ package com.sbschoolcode.xyzreader.ui;
 
 import android.app.ActivityOptions;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.sbschoolcode.xyzreader.AppUtils;
 import com.sbschoolcode.xyzreader.R;
 import com.sbschoolcode.xyzreader.adapters.ArticleAdapter;
 import com.sbschoolcode.xyzreader.data.ItemsContract;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
 
     private MainViewModel mMainViewModel;
     private MutableLiveData<Cursor> mAllArticlesLiveData;
+    private Observer<Cursor> mItemsObserver;
 
     //BroadcastReceiver & IntentFilter
     private RefreshingBroadcastReceiver mRefreshingBroadcastReceiver;
@@ -76,9 +79,14 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
 
         mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        mMainViewModel.addObserver(this, cursor -> mAllArticlesLiveData.setValue(cursor));
+        mItemsObserver = cursor -> mAllArticlesLiveData.setValue(cursor);
 
         mAllArticlesLiveData.observe(this, cursor -> {
+            if (cursor == null || cursor.getCount() == 0) {
+                formErrorMessage();
+                return;
+            }
+
             mArticleAdapter.updateData(cursor);
             mArticleAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
@@ -108,10 +116,18 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh) {
-            mMainViewModel.refreshData(this);
+            startUpdaterService();
             return true;
         }
         return false;
+    }
+
+    private void formErrorMessage() {
+        StringBuilder stringBuilder = new StringBuilder(getString(R.string.uh_oh_base));
+        if (!AppUtils.isNetworkAvailable(this)) {
+            stringBuilder.append(" ").append(getString(R.string.uh_oh_internet));
+        }
+        AppUtils.summonSnackbarSelfClosing(mSwipeRefreshLayout, stringBuilder.toString());
     }
 
     private void viewSetup() {
@@ -161,8 +177,13 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
                 boolean isRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 mSwipeRefreshLayout.setRefreshing(isRefreshing);
 
-                if (!isRefreshing)
+                if (isRefreshing) {
+                    mMainViewModel.removeObserver(mItemsObserver);
+                }
+                if (!isRefreshing) {
+                    mMainViewModel.addObserver(MainActivity.this, mItemsObserver);
                     mMainViewModel.refreshData(MainActivity.this);
+                }
             }
         }
     }

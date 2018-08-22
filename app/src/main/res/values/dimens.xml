@@ -1,10 +1,10 @@
 <resources>
     <!-- Fab dimensions -->
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
 
     <!-- App bar dimensions -->
     <dimen name="app_bar_height_not_collapsed_main">120dp</dimen>
-    <dimen name="app_bar_height_not_collapsed_detail">360dp</dimen>
+    <dimen name="app_bar_height_not_collapsed_detail">320dp</dimen>
 
     <!-- Meta bar dimensions -->
     <dimen name="detail_metabar_vertical_padding">16dp</dimen>
@@ -13,7 +13,7 @@
 
     <!-- Text dimensions -->
     <dimen name="detail_title_text_size">32sp</dimen>
-    <dimen name="detail_body_text_size">22sp</dimen>
+    <dimen name="detail_body_text_size">16sp</dimen>
     <dimen name="detail_body_horizontal_padding">16dp</dimen>
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
 
@@ -21,5 +21,7 @@
     <dimen name="image_placeholder_size">32dp</dimen>
     <dimen name="detail_body_bottom_margin">88dp</dimen>
     <dimen name="detail_body_top_padding">16dp</dimen>
+    <dimen name="detail_body_bottom_padding">32dp</dimen>
+    <dimen name="show_all_button_padding">16dp</dimen>
 
 </resources>
