@@ -208,4 +208,11 @@ public class DetailActivityFragment extends Fragment {
                             + "</font>");
         }
     }
+
+    public void adjustFabHeight(int navigationBarHeight) {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mFab.getLayoutParams();
+        params.setMargins(0, 0, params.rightMargin, params.leftMargin + navigationBarHeight);
+
+        mFab.setLayoutParams(params);
+    }
 }
