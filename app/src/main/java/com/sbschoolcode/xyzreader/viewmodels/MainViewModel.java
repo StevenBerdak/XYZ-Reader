@@ -13,7 +13,6 @@ public class MainViewModel extends ViewModel implements MainViewModelInterface {
 
     private final MutableLiveData<Cursor> mAllArticles;
     private final DataRepository mDataRepository;
-    private int mLastOrientation = -1;
 
     public MainViewModel() {
         mAllArticles = new MutableLiveData<>();
