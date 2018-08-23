@@ -149,18 +149,20 @@ public class DetailActivityFragment extends Fragment {
         mHeaderBarSubtitle.setText(parseSubHeader(cursor));
 
         mReadAll.setOnClickListener(v -> {
-                mReadAll.setText(R.string.loading);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(() -> {
-                    mContentText.setText(Html.fromHtml(cursor.getString(ArticleLoader.Query.BODY)
-                            .replaceAll("(\r\n|\n)", "<br />")));
-                    mReadAll.setVisibility(View.GONE);
-                }, 1000);
+            mReadAll.setText(R.string.loading);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                mContentText.setText(Html.fromHtml(cursor.getString(ArticleLoader.Query.BODY)
+                        .replaceAll("(\r\n|\n)", "<br />")));
+                mReadAll.setVisibility(View.GONE);
+            }, 1000);
+            mDetailViewModel.setExpanded(true);
         });
 
-        Spanned clippedTextSpanned = Html.fromHtml(cursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />"));
+        String textSpan = Html.fromHtml(cursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")).toString();
+        textSpan = mDetailViewModel.getExpanded() ? textSpan : TextUtils.concat(textSpan.subSequence(0, 500), getString(R.string.ellipses)).toString();
 
-        mContentText.setText(TextUtils.concat(clippedTextSpanned.subSequence(0, 500), getString(R.string.ellipses)));
+        mContentText.setText(textSpan);
 
         ImageUtils.seamlessLoadFromUrlToContainer(mHeaderImageView,
                 cursor.getString(ArticleLoader.Query.PHOTO_URL),
@@ -169,6 +171,7 @@ public class DetailActivityFragment extends Fragment {
 
     public void refreshData(long itemId) {
         mDetailViewModel.refreshItem(getContext(), itemId);
+        mDetailViewModel.setExpanded(false);
     }
 
     private Spanned parseSubHeader(Cursor cursor) {

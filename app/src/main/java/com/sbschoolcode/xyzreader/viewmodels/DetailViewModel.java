@@ -14,6 +14,7 @@ public class DetailViewModel extends ViewModel implements DetailViewModelInterfa
     private final MutableLiveData<Cursor> mItemLiveData;
     private final DataRepository mDataRepository;
     private long mCurrentItem;
+    private boolean mExpanded;
 
     public DetailViewModel() {
         mItemLiveData = new MutableLiveData<>();
@@ -38,5 +39,13 @@ public class DetailViewModel extends ViewModel implements DetailViewModelInterfa
 
     public long getCurrentItem() {
         return mCurrentItem;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.mExpanded = expanded;
+    }
+
+    public boolean getExpanded() {
+        return mExpanded;
     }
 }

@@ -25,7 +25,7 @@ public class ImageUtils {
 
                         topLevelContainer.setVisibility(View.VISIBLE);
                         AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-                        alphaAnimation.setDuration(1000);
+                        alphaAnimation.setDuration(500);
                         alphaAnimation.setRepeatMode(Animation.RESTART);
                         topLevelContainer.startAnimation(alphaAnimation);
                     }

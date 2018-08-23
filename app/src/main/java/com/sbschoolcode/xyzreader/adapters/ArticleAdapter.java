@@ -127,5 +127,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     public void updateData(Cursor cursor) {
         this.mCursor = cursor;
+        notifyDataSetChanged();
     }
 }

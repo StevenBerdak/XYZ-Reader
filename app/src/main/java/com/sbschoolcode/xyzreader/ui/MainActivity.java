@@ -1,23 +1,22 @@
 package com.sbschoolcode.xyzreader.ui;
 
 import android.app.ActivityOptions;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.transition.AutoTransition;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -34,9 +33,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements ArticleClickListener {
 
+    private static final String OUT_STATE_ITEM_POSITION = "out_state_item_position";
     private MainViewModel mMainViewModel;
-    private MutableLiveData<Cursor> mAllArticlesLiveData;
-    private Observer<Cursor> mItemsObserver;
+    private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
+    private ArticleAdapter mArticleAdapter;
+    private SwipeRefreshLayout.OnRefreshListener mOnRefreshListener;
+    private int mScrollTo;
 
     //BroadcastReceiver & IntentFilter
     private RefreshingBroadcastReceiver mRefreshingBroadcastReceiver;
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
 
     @BindView(R.id.main_recycler_view)
     RecyclerView mRecyclerView;
-    private ArticleAdapter mArticleAdapter;
 
     @BindView(R.id.main_swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -73,32 +74,50 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
         mRefreshingIntentFilter = new IntentFilter();
         mRefreshingIntentFilter.addAction(UpdaterService.BROADCAST_ACTION_STATE_CHANGE);
 
-        mAllArticlesLiveData = new MutableLiveData<>();
+        mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
         viewSetup();
 
-        mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-
-        mItemsObserver = cursor -> mAllArticlesLiveData.setValue(cursor);
-
-        mAllArticlesLiveData.observe(this, cursor -> {
+        mMainViewModel.addObserver(this, cursor -> {
             if (cursor == null || cursor.getCount() == 0) {
                 formErrorMessage();
                 return;
             }
 
             mArticleAdapter.updateData(cursor);
-            mArticleAdapter.notifyDataSetChanged();
-            mSwipeRefreshLayout.setRefreshing(false);
-        });
 
-        if (savedInstanceState == null) startUpdaterService();
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            if (mScrollTo != 0)
+                new Handler(getMainLooper()).postDelayed(() -> mRecyclerView.scrollToPosition(mScrollTo), 1000);
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int itemPosition = mStaggeredGridLayoutManager.findFirstCompletelyVisibleItemPositions(null)[0];
+        itemPosition = clamp(itemPosition, 0, mRecyclerView.getChildCount() - 1);
+        outState.putInt(OUT_STATE_ITEM_POSITION, itemPosition);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mStaggeredGridLayoutManager.onRestoreInstanceState(null);
+        mScrollTo = savedInstanceState.getInt(OUT_STATE_ITEM_POSITION);
+
+        Log.v(getClass().getSimpleName(), "test : " + mArticleAdapter.getItemCount());
     }
 
     @Override
     protected void onResume() {
         registerReceiver(mRefreshingBroadcastReceiver, mRefreshingIntentFilter);
         super.onResume();
+        if (mArticleAdapter.getItemCount() == 0) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            startUpdaterService();
+        }
     }
 
     @Override
@@ -122,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
         return false;
     }
 
+    private int clamp(int x, int lowerBound, int upperBound) {
+        if (x < lowerBound) return lowerBound;
+        if (x > upperBound) return upperBound;
+        return x;
+    }
+
     private void formErrorMessage() {
         StringBuilder stringBuilder = new StringBuilder(getString(R.string.uh_oh_base));
         if (!AppUtils.isNetworkAvailable(this)) {
@@ -132,31 +157,33 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
 
     private void viewSetup() {
         //AppBar setup
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-                if (verticalOffset != 0) {
+        mOnRefreshListener = this::startUpdaterService;
+        mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (verticalOffset != 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     if (mAppBarLayout.getElevation() != 4) mAppBarLayout.setElevation(4);
-                    mSwipeRefreshLayout.setEnabled(false);
-                } else {
-                    if (mAppBarLayout.getElevation() != 0) mAppBarLayout.setElevation(0);
-                    mSwipeRefreshLayout.setEnabled(true);
                 }
-            });
-        }
+                mSwipeRefreshLayout.setOnRefreshListener(null);
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (mAppBarLayout.getElevation() != 0) mAppBarLayout.setElevation(0);
+                }
+                mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+            }
+        });
 
-        //SwipeRefreshLayout setup
-        mSwipeRefreshLayout.setOnRefreshListener(this::startUpdaterService);
 
         //RecyclerView setup
         mArticleAdapter = new ArticleAdapter(this, null);
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(
-                getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ? 1 : 2,
-                StaggeredGridLayoutManager.VERTICAL));
-
+        mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(
+                getOrientation() == Configuration.ORIENTATION_PORTRAIT ? 1 : 2,
+                StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
         mRecyclerView.setAdapter(mArticleAdapter);
     }
 
     private void startUpdaterService() {
+        mScrollTo = 0;
         startService(new Intent(this, UpdaterService.class));
     }
 
@@ -169,21 +196,21 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
         } else startActivity(detailsActivity);
     }
 
+    private int getOrientation() {
+        return getResources().getConfiguration().orientation;
+    }
+
     class RefreshingBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
+
                 boolean isRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
                 mSwipeRefreshLayout.setRefreshing(isRefreshing);
 
-                if (isRefreshing) {
-                    mMainViewModel.removeObserver(mItemsObserver);
-                }
-                if (!isRefreshing) {
-                    mMainViewModel.addObserver(MainActivity.this, mItemsObserver);
-                    mMainViewModel.refreshData(MainActivity.this);
-                }
+                if (!isRefreshing)
+                    mMainViewModel.updateData(MainActivity.this);
             }
         }
     }

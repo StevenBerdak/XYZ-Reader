@@ -7,7 +7,7 @@ import android.database.Cursor;
 
 interface MainViewModelInterface {
 
-    void refreshData(Context ctx);
+    void updateData(Context ctx);
 
     void addObserver(LifecycleOwner lifecycleOwner, Observer<Cursor> observer);
 

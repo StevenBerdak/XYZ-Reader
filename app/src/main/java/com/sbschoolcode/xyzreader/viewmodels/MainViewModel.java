@@ -13,6 +13,7 @@ public class MainViewModel extends ViewModel implements MainViewModelInterface {
 
     private final MutableLiveData<Cursor> mAllArticles;
     private final DataRepository mDataRepository;
+    private int mLastOrientation = -1;
 
     public MainViewModel() {
         mAllArticles = new MutableLiveData<>();
@@ -20,7 +21,7 @@ public class MainViewModel extends ViewModel implements MainViewModelInterface {
     }
 
     @Override
-    public void refreshData(Context ctx) {
+    public void updateData(Context ctx) {
         mAllArticles.postValue(mDataRepository.getAllArticles(ctx));
     }
 
