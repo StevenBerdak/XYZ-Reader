@@ -158,17 +158,16 @@ public class MainActivity extends AppCompatActivity implements ArticleClickListe
     private void viewSetup() {
         //AppBar setup
         mOnRefreshListener = this::startUpdaterService;
+        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
         mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
             if (verticalOffset != 0) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     if (mAppBarLayout.getElevation() != 4) mAppBarLayout.setElevation(4);
                 }
-                mSwipeRefreshLayout.setOnRefreshListener(null);
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     if (mAppBarLayout.getElevation() != 0) mAppBarLayout.setElevation(0);
                 }
-                mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
             }
         });
 
