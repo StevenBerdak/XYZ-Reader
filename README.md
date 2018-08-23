@@ -15,4 +15,10 @@ My submission for Project 5 of the Android Developer Nano-Degree, the XYZ Reader
 
 ### Images
 
+<p align="center">
+  <img src="https://github.com/StevenBerdak/XYZ-Reader/tree/master/images/xyz_demo1.gif" width="300px" />
+  <img src="https://github.com/StevenBerdak/XYZ-Reader/tree/master/images/xyz_demo2.gif" width="300px" />
+  <img src="https://github.com/StevenBerdak/XYZ-Reader/tree/master/images/xyz_demo3.gif" width="300px" />
+</p>
+
 
